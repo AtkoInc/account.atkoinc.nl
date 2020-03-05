@@ -114,14 +114,6 @@ router.get("/", async (req, res, next) => {
 
 });
 
-router.get("/authorization-code/default",
-    //TODO: How to get the correct strategy here?
-    passport.authenticate('default', {failureRedirect: '/error'}),
-    (req, res) => {
-        res.redirect('/me');
-    }
-);
-
 router.get("/me",tr.ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/me requested")
     const tokenSet = req.userContext.tokens;

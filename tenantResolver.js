@@ -6,18 +6,10 @@ var logger = require('./logger')
 
 const defaultTenantSub = "default";
 
-var defaultTenantConfig = {
-    okta_org_name: process.env.OKTA_ORG_URL,
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    redirect_uri: process.env.REDIRECT_URI,
-    post_logout_redirect_uri: process.env.REDIRECT_URI
-};
-
 class TenantResolver {
     constructor() {
         this.tenants = new Map([]);
-        this.tenants.set(defaultTenantSub,new Tenant(defaultTenantConfig,defaultTenantSub))
+        this.tenants.set(defaultTenantSub,new Tenant(null,defaultTenantSub))
         this.registerTenantRoutes(this.tenants.get(defaultTenantSub),defaultTenantSub)
     }
 
