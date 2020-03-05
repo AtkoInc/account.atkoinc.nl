@@ -1,5 +1,4 @@
 require('dotenv').config()
-require('https').globalAgent.options.rejectUnauthorized = false;
 
 const express = require('express')
 const hbs  = require('express-handlebars')
