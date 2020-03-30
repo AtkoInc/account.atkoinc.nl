@@ -1,4 +1,5 @@
 require('dotenv').config()
+
 const express = require('express')
 const hbs  = require('express-handlebars')
 const session = require('express-session')
@@ -15,6 +16,7 @@ const userProfile = require('./models/userprofile')
 const PORT = process.env.PORT || 3000;
 
 app = express();
+app.use(express.json());
 
 app.engine('hbs',  hbs( { 
     extname: 'hbs', 
@@ -116,13 +118,12 @@ router.get("/me",tr.ensureAuthenticated(), async (req, res, next) => {
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
     try {
-        const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/'+req.userContext.userinfo.sub)
-        userProfile = new userProfile(response.data)
-
+        const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
+        var profile = new userProfile(response.data)
         res.render("me",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
-            user: userProfile,
+            user: profile,
         });
     }
     catch(error) {
@@ -135,7 +136,126 @@ router.get("/me",tr.ensureAuthenticated(), async (req, res, next) => {
     }
 });
 
-app.get("/logout", tr.ensureAuthenticated(), (req, res) => {
+router.post("/me/edit", [tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+
+    try {        
+        await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/me', {
+            'profile': {
+                firstName: req.body.first_name,
+                lastName: req.body.last_name
+            }
+        })
+
+        res.redirect('/me');
+    }
+    catch(error) {
+        res.render("me",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: new userProfile(),
+            error: parseError(error)
+        });
+    }
+});
+
+router.get("/me/edit",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/me requested")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    try {
+        const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
+        var profile = new userProfile(response.data)
+        res.render("edit-profile",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: profile,
+        });
+    }
+    catch(error) {
+        res.render("me",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: new userProfile(),
+            error: parseError(error)
+        });
+    }
+});
+
+router.post("/me/change-password",[tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+    logger.verbose("/password-reset posted")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    try {
+        const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
+        var changePasswordLink = response.data._links.changePassword.href;
+
+        var body = {
+            oldPassword: req.body.current_password,
+            newPassword: req.body.password
+        }
+
+        await axios.post(changePasswordLink, body);
+
+        res.redirect('/me');
+    }
+    catch(error) {
+        res.render("change-password",{
+            error: parseError(error)
+        });
+    }
+});
+
+router.get("/me/change-password",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/password-reset requested")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    try {
+        const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
+
+        res.render("change-password",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens
+        });
+    }
+    catch(error) {
+        res.render("me",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: new userProfile(),
+            error: parseError(error)
+        });
+    }
+});
+
+router.get("/me/configure-mfa",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/configure-mfa requested")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    try {
+        var idToken = parseJWT(req.userContext.tokens.id_token);
+        const enrolled = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors');
+        const toEnroll = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors/catalog');
+
+        res.render("configure-mfa",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            enrolledFactors: enrolled.data,
+            factorsToEnroll: toEnroll.data
+        });
+    }
+    catch(error) {
+        res.render("me",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: new userProfile(),
+            error: parseError(error)
+        });
+    }
+});
+
+router.get("/logout", tr.ensureAuthenticated(), (req, res) => {
     logger.verbose("/logout requsted")
     let protocol = "http"
     if(req.secure){
@@ -159,7 +279,6 @@ app.get("/logout", tr.ensureAuthenticated(), (req, res) => {
 });
 
 router.get("/error",async (req, res, next) => {
-    logger.warn(req)
     res.render("error",{
         msg: "An error occured, unable to process your request."
        });
