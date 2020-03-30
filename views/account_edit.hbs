@@ -32,8 +32,10 @@
                                                 <div class="form-group">
                                                     <label for="input-select">Strong authentication (todo: Handlebar helper for setting select for: {{mfaPreferred}})</label>
                                                     <select class="form-control" id="input-select">
-                                                        <option value="false">Disbaled</option>
+                                                        {{#select mfaPreferred}}
+                                                        <option value="false">Disabled</option>
                                                         <option value="true">Enabled</option>
+                                                        {{/select}}
                                                     </select>
                                                 </div>
                                                 <div class="form-group" style="display:none;">

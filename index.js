@@ -36,6 +36,11 @@ app.engine('hbs',  hbs( {
             } else {
                 return "Invalid or empty token was parsed"
             }
+        },
+        'select': function(selected, options) {
+            return options.fn(this).replace(
+                new RegExp(' value=\"' + selected + '\"'),
+                '$& selected="selected"');
         }
     }
   } ) );
