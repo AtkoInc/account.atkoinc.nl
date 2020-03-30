@@ -19,6 +19,9 @@ class UserProfile {
                 }
                 this.lastLogin = profileJson.lastLogin
                 this.lastUpdate = profileJson.lastUpdated
+//                this.mail_service = profileJson.mail_service
+//                this.mail_newsletter = profileJson.mail_newsletter
+//                this.mail_daydeals = profileJson.mail_daydeals
             }
             catch(error) {
                 logger.error(error);
