@@ -1,5 +1,5 @@
 require('dotenv').config()
-
+require('https').globalAgent.options.rejectUnauthorized = false;
 const express = require('express')
 const hbs  = require('express-handlebars')
 const session = require('express-session')
@@ -42,7 +42,7 @@ app.engine('hbs',  hbs( {
 
 app.set('view engine', 'hbs');
 
-app.use('/static', express.static('static'));
+app.use('/assets', express.static('assets'));
 app.use('/scripts', express.static(__dirname + '/node_modules/clipboard/dist/'));
 
 app.use(session({
@@ -103,15 +103,16 @@ function parseError(error){
 
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
-    logger.verbose("/ requested")
-    const requestingTenant = tr.getRequestingTenant(req);
-
-    res.render("index",{
-        tenant: requestingTenant.tenant,
-    });
-
+router.get("/",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/home requested")
+    res.render('account_home', {layout: 'main', template: 'account_home'});
 });
+
+router.get('/forgetme', function(req, res, next) {
+  res.render('account_delete', {layout: 'main', template: 'account_delete'});
+});
+
+
 
 router.get("/me",tr.ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/me requested")
@@ -136,22 +137,22 @@ router.get("/me",tr.ensureAuthenticated(), async (req, res, next) => {
     }
 });
 
-router.post("/me/edit", [tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+router.get("/account",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/account requested")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
-
-    try {        
-        await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/me', {
-            'profile': {
-                firstName: req.body.first_name,
-                lastName: req.body.last_name
-            }
-        })
-
-        res.redirect('/me');
+    try {
+        const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
+        var profile = new userProfile(response.data)
+        console.log(profile);
+        res.render("account_edit",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: profile,
+        });
     }
     catch(error) {
-        res.render("me",{
+        res.render("account_edit",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: new userProfile(),
@@ -160,21 +161,47 @@ router.post("/me/edit", [tr.ensureAuthenticated(), urlencodedParser], async (req
     }
 });
 
-router.get("/me/edit",tr.ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/me requested")
+router.get("/account_profile",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/account profile requested")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
     try {
         const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
         var profile = new userProfile(response.data)
-        res.render("edit-profile",{
+        console.log(profile);
+        res.render("account_profile",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: profile,
         });
     }
     catch(error) {
-        res.render("me",{
+        res.render("account_profile",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: new userProfile(),
+            error: parseError(error)
+        });
+    }
+});
+
+router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+
+    try {        
+        await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/me', {
+            'profile': {
+                firstName: req.body.first_name,
+                lastName: req.body.last_name,
+                title: req.body.title,
+            }
+        })
+
+        res.redirect('/account_profile');
+    }
+    catch(error) {
+        res.render("/account_profile",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: new userProfile(),

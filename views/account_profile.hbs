@@ -1,0 +1,70 @@
+{{#with user}}
+
+        <!-- ============================================================== -->
+        <!-- wrapper  -->
+        <!-- ============================================================== -->
+        <div class="dashboard-wrapper">
+            <div class="container-fluid dashboard-content">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <!-- ============================================================== -->
+                            <!-- pageheader -->
+                            <!-- ============================================================== -->
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="page-header" id="top">
+                                        <h2 class="pageheader-title">Manage your personal data</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- end pageheader -->
+                            <!-- ============================================================== -->
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="section-block" id="basicform">
+                                        <p>We care about your personal data and try our very best to keep it safe. As we also respect your right to understand what data we have, we also allow you to update it yourself. If you would like to remove your account, please click <a href="/account_delete">here</a>, or manage access to your data <a href="/account_consent">here</a>.</p>
+                                    </div>
+                                    <div class="card">
+                                        <h5 class="card-header">Personal data</h5>
+                                        <div class="card-body">
+                                            <form action="account_profile" method="post">
+                                                <div class="form-group">
+                                                    <label for="inputText3" class="col-form-label">Username</label>
+                                                    <input id="inputText3" type="text" disabled class="form-control" value="{{userName}}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="inputText3" class="col-form-label">First name</label>
+                                                    <input id="first_name" name="first_name" type="text" class="form-control" value="{{firstName}}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="inputText3" class="col-form-label">Last name</label>
+                                                    <input id="last_name" name="last_name" type="text" class="form-control" value="{{lastName}}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="inputText3" class="col-form-label">Job Title</label>
+                                                    <input id="title" name="title" type="text" class="form-control" value="{{title}}">
+                                                </div>
+                                                <hr>
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                                    <button class="btn btn-primary" type="submit">Update information</button> <a href="/account_profile"><button class="btn btn-default" type="Button">Cancel</button></a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end main wrapper -->
+    <!-- ============================================================== -->
+    {{/with}}
+
+<pre>{{error}}</pre>
+
+<a href="/me">Cancel</a>
