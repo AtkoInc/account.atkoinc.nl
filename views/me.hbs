@@ -1,14 +1,48 @@
-<h1>Your Access Token</h1>
-<pre>{{jwt tokenSet.access_token}}</pre>
-<h1>Your ID Token</h1>
-<pre>{{jwt tokenSet.id_token}}</pre>
 
-<pre>{{user.lastLogin}}</pre>
-
-<pre>{{error}}</pre>
-
-<a href="/me/edit">Edit profile</a><br />
-<a href="/me/change-password">Change Password</a><br />
-<a href="/me/configure-mfa">Configure Factors</a><br />
-
-<a href="/logout">Logout</a>
+        <!-- ============================================================== -->
+        <!-- wrapper  -->
+        <!-- ============================================================== -->
+        <div class="dashboard-wrapper">
+            <div class="container-fluid dashboard-content">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <!-- ============================================================== -->
+                            <!-- pageheader -->
+                            <!-- ============================================================== -->
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="page-header" id="top">
+                                        <h2 class="pageheader-title">Tokens</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- end pageheader -->
+                            <!-- ============================================================== -->
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="section-block" id="basicform">
+                                    </div>
+                                    <div class="card">
+                                        <h5 class="card-header">ID token</h5>
+                                        <div class="card-body">
+                                            <pre>{{jwt tokenSet.id_token}}</pre>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <h5 class="card-header">Access token</h5>
+                                        <div class="card-body">
+                                            <pre>{{jwt tokenSet.access_token}}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end main wrapper -->
+    <!-- ============================================================== -->

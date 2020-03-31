@@ -10,9 +10,14 @@
                             <!-- ============================================================== -->
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    {{#with user}}
+                                    {{#if mfaPreferred}}
+                                    {{else}}
                                     <div class="alert alert-warning" role="alert">
                                         Your account does not have voluntary MFA enabled. Click <a href="">here</a> to increase security on your account.
                                     </div>
+                                    {{/if}}
+                                    {{/with}}
                                     <div class="page-header" id="top">
                                         <h2 class="pageheader-title">Welcome to your account management</h2>
                                     </div>
@@ -24,11 +29,12 @@
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                     <ul>
-                                        <li>Make MFA banner dynamic</li>
-                                        <li>Select right option in account edit for mfa</li>
-                                        <li>Fix logout</li>
-                                        <li>Add view tokens</li>
-                                        <li>Account type under logout modal</li>
+                                        <li style="color:green;">Make MFA banner dynamic</li>
+                                        <li style="color:green;">Select right option in account edit for mfa</li>
+                                        <li style="color:green;">Fix logout</li>
+                                        <li style="color:green;">Add view tokens</li>
+                                        <li style="color:green;">Account type under logout modal</li>
+                                        <li>Make correct sidebar item active</li>
                                     </ul>
                                 </div>
                             </div>
