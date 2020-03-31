@@ -108,7 +108,11 @@ function parseError(error){
 
 const router = express.Router();
 
-router.get("/",tr.ensureAuthenticated(), async (req, res, next) => {
+router.get('/', function(req, res, next) {
+  res.render('index', {layout: 'home', template: 'home'});
+});
+
+router.get("/home",tr.ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/home requested")
     res.render('account_home', {layout: 'main', template: 'account_home'});
 });
