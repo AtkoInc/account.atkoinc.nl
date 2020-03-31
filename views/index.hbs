@@ -1,3 +1,5 @@
+    <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+
         <!-- ============================================================== -->
         <!-- wrapper  -->
         <!-- ============================================================== -->
@@ -11,41 +13,57 @@
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                     <div class="page-header" id="top">
-                                        <h2 class="pageheader-title">Atko inc - Your partner in everything</h2>
+                                        <h2 class="pageheader-title">Application dashboard</h2>
                                     </div>
-                                    <div class="section-block" id="basicform">
-                                        <p>
-                                        	Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui.
-                                        </p>
-                                    </div>
-
                                 </div>
                             </div>
                             <!-- ============================================================== -->
                             <!-- end pageheader -->
                             <!-- ============================================================== -->
                             <div class="row">
-	                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-	                                <p>Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia.</p>
-	                                <div class="card">
-	                                    <div class="card-header">
-	                                        We care about your privacy
-	                                    </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="section-block" id="basicform">
+                                        <p>This custom portal page will offer access to all the applications you have been assigned by your administrator</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="cnt_appLinks" class="row">
 
-	                                    <div class="card-body">
-	                                        <p class="card-text">To secure the data within our platform, and your sensitive information, please login to you MyAtko account to be able to use our services. In case you do not have access to your account, please use the following self-service options or contact us at +99 (555) 111 333.</p>
-	                                        <a href="/home" class="btn btn-primary">Login to your account</a><a href="https://login.atkoinc.nl/signin/forgot-password"><button class="btn btn-default" type="Button">I forgot my password</button></a><a href="https://login.atkoinc.nl/signin/register"><button class="btn btn-default" type="Button">Register a new account</button></a>
-	                                    </div>
-	                                </div>
-	                            </div>
-	                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-	                                <div class="card">
-	                                    <img class="img-fluid" src="assets/images/back.jpeg" alt="Card image cap">
-	                                </div>
-	                            </div>
-	                        </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+    <script>
+        var iCnt = 1;
+        var rowId = 'row_a'
+    </script>
+    {{#each apps}}
+        <script>
+            var appLinkUrl = "{{linkUrl}}";
+            var appLabel = "{{label}}";
+            var appLogoUrl = "{{logoUrl}}";
+
+            console.log(appLabel);
+            iCnt ++;
+            
+            var sHtml = ''
+            sHtml = sHtml + '<div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">';
+            sHtml = sHtml + '<div class="card">';
+            sHtml = sHtml + '<div class="card-header"><h3 class="card-title mb-2">{{label}}</h3></div>';
+            sHtml = sHtml + '<img class="img-fluid img-applink" src="{{logoUrl}}" alt="Card image cap">';
+            sHtml = sHtml + '<div class="card-body"><a href="{{linkUrl}}" target="_new" class="btn btn-primary">Open</a>';
+            sHtml = sHtml + '</div>';
+            sHtml = sHtml + '</div>';
+                                
+            $("#cnt_appLinks").append(sHtml);
+
+// '<a href="{{linkUrl}}" target="_blank"><article class="item thumb span-1"><h2>{{label}}</h2><img style="" src="{{logoUrl}}" alt=""></h2></article></a><br>' 
+
+        </script>
+        
+    {{/each}}
+
+
 
