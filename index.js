@@ -117,7 +117,7 @@ router.get("/",tr.ensureAuthenticated(), async (req, res, next) => {
             var app = new appLink(response.data[idx]);
             apps.push(app);
         }
-//        console.log(apps);
+        console.log(apps);
         res.render("index",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
