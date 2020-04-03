@@ -68,7 +68,7 @@ passport.serializeUser((user, next) => {
     next(null, obj);
   });
 
-const tr = new tenantResolver();
+  const tr = new tenantResolver();
 
 function parseJWT (token){
     var atob = require('atob');
@@ -113,8 +113,30 @@ router.get('/', function(req, res, next) {
 });
 
 router.get("/home",tr.ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/home requested")
-    res.render('account_home', {layout: 'main', template: 'account_home'});
+    logger.verbose("/home requested");
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    try {
+        const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
+        var profile = new userProfile(response.data)
+        res.render("account_home",{
+            layout: 'main',
+            template: 'account_home',
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: profile,
+        });
+    }
+    catch(error) {
+        rees.render("account_home",{
+            layout: 'main',
+            template: 'account_home',
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            user: new userProfile(),
+            error: parseError(error)
+        });
+    }
 });
 
 router.get('/forgetme', function(req, res, next) {
