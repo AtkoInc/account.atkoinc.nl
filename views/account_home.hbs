@@ -1,0 +1,86 @@
+        <!-- ============================================================== -->
+        <!-- wrapper  -->
+        <!-- ============================================================== -->
+        <div class="dashboard-wrapper">
+            <div class="container-fluid dashboard-content">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <!-- ============================================================== -->
+                            <!-- pageheader -->
+                            <!-- ============================================================== -->
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    {{#with user}}
+                                    {{#if mfaPreferred}}
+                                    {{else}}
+                                    <div class="alert alert-warning" role="alert">
+                                        Your account does not have voluntary MFA enabled. Click <a href="">here</a> to increase security on your account.
+                                    </div>
+                                    {{/if}}
+                                    {{/with}}
+                                    <div class="page-header" id="top">
+                                        <h2 class="pageheader-title">Welcome to your account management</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ============================================================== -->
+                            <!-- end pageheader -->
+                            <!-- ============================================================== -->
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <ul>
+                                        <li style="color:green;">Make MFA banner dynamic</li>
+                                        <li style="color:green;">Select right option in account edit for mfa</li>
+                                        <li style="color:green;">Fix logout</li>
+                                        <li style="color:green;">Add view tokens</li>
+                                        <li style="color:green;">Account type under logout modal</li>
+                                        <li>Make correct sidebar item active</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <!-- ============================================================== -->
+                                    <!-- overview -->
+                                    <!-- ============================================================== -->
+                                    <div class="page-section" id="overview">
+                                        <div class="row">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+											<p class="lead">Your privacy is important to us, and this application allows you to manage your data, terminate your account and manage the consent you have given to apps that use your data.</p>
+                                                <ul class="list-unstyled arrow">
+                                                    <li>Update your account and profile</li>
+                                                    <li>Change your preferences</li>
+                                                    <li>Manage consent</li>
+                                                    <li>Add remove account option</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- ============================================================== -->
+                                    <!-- end overview -->
+                                    <!-- ============================================================== -->
+                                </div>
+                            </div>
+                            <div class="row">
+                                <!-- ============================================================== -->
+                                <!-- button  -->
+                                <!-- ============================================================== -->
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="section-block" id="buttons">
+                                        <h3 class="section-title">Some more information</h3>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+            
+            
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end main wrapper -->
+    <!-- ============================================================== -->
