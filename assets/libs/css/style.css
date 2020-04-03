@@ -3314,15 +3314,6 @@ btn-link
     overflow: hidden;
 }
 
-.img-applink {
-    max-height:50px;
-    max-width: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
 .figure-img .img-link {
     position: absolute;
     top: 0;
