@@ -1,0 +1,39 @@
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="page-header" id="top">
+            <h2 class="pageheader-title">Extra Verification</h2>
+        </div>
+        <div class="section-block" id="basicform">
+            <p>This page displays all relevant settings and preferences that we store on your account. Please view the <a href="#">view profile</a> page to understand what personal idendifialble information we store of you.</p>
+        </div>
+        <div class="card">
+            <h5 class="card-header">Enrolled Factors</h5>
+            <div class="card-body">
+                {{#if smsEnrolled}}
+                <p>Your SMS second factor is <b>ACTIVE</b></p>
+                <form action="removesms" method="post">
+                    <div class="form-group" style="display:none;">
+                        <label for="sms_factor_id" class="col-form-label">SMS Factor ID</label>
+                        <input id="sms_factor_id" class="form-control" name="sms_factor_id" type="text" value="{{smsFactorId}}"/>
+                    </div>
+                    <div>
+                        <button class="btn btn-danger" type="submit">Reset SMS Factor</button>
+                    </div>
+                </form>
+                
+                {{else}}
+                <p>Your SMS second factor is <b>INACTIVE</b></p>
+                <form  action="configuresms" method="post">
+                    <div class="form-group">
+                        <label for="phone_number" class="col-form-label">Phone Number</label>
+                        <input id="phone_number" class="form-control" name="phone_number" type="tel" />
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" type="submit">Enroll in SMS Factor</button>
+                    </div>
+                </form>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>

@@ -5,6 +5,7 @@ const hbs  = require('express-handlebars')
 const session = require('express-session')
 const axios = require('axios')
 const bodyParser = require('body-parser')
+const flash = require('connect-flash')
 const urlencodedParser = bodyParser.urlencoded({ extended: true });
 
 var passport = require('passport');
@@ -17,6 +18,7 @@ const PORT = process.env.PORT || 3000;
 
 app = express();
 app.use(express.json());
+app.use(flash());
 
 app.engine('hbs',  hbs( { 
     extname: 'hbs', 
@@ -109,7 +111,8 @@ function parseError(error){
 const router = express.Router();
 
 router.get('/', function(req, res, next) {
-  res.render('index', {layout: 'home', template: 'home'});
+  res.redirect("/home");
+    //res.render('index', {layout: 'home', template: 'home'});
 });
 
 router.get("/home",tr.ensureAuthenticated(), async (req, res, next) => {
@@ -143,23 +146,21 @@ router.get('/forgetme', function(req, res, next) {
   res.render('account_delete', {layout: 'main', template: 'account_delete'});
 });
 
-
-
-router.get("/me",tr.ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/me requested")
+router.get("/tokens",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/tokens requested")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
     try {
         const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
         var profile = new userProfile(response.data)
-        res.render("me",{
+        res.render("tokens",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: profile,
         });
     }
     catch(error) {
-        res.render("me",{
+        res.render("tokens",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: new userProfile(),
@@ -175,7 +176,6 @@ router.get("/account",tr.ensureAuthenticated(), async (req, res, next) => {
     try {
         const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
         var profile = new userProfile(response.data)
-        console.log(profile);
         res.render("account_edit",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
@@ -199,11 +199,12 @@ router.get("/account_profile",tr.ensureAuthenticated(), async (req, res, next) =
     try {
         const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
         var profile = new userProfile(response.data)
-        console.log(profile);
+        
         res.render("account_profile",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: profile,
+            flash: req.flash('msg'),
         });
     }
     catch(error) {
@@ -229,10 +230,11 @@ router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], as
             }
         })
 
+        req.flash('msg', 'Profile updated');
         res.redirect('/account_profile');
     }
     catch(error) {
-        res.render("/account_profile",{
+        res.render("account_profile",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: new userProfile(),
@@ -241,8 +243,8 @@ router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], as
     }
 });
 
-router.post("/me/change-password",[tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
-    logger.verbose("/password-reset posted")
+router.post("/changepassword",[tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+    logger.verbose("/changepassword posted")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
     try {
@@ -255,30 +257,31 @@ router.post("/me/change-password",[tr.ensureAuthenticated(), urlencodedParser], 
         }
 
         await axios.post(changePasswordLink, body);
-
-        res.redirect('/me');
+        req.flash('msg', 'Password updated');
+        res.redirect('/changepassword');
     }
     catch(error) {
-        res.render("change-password",{
+        res.render("account_password",{
             error: parseError(error)
         });
     }
 });
 
-router.get("/me/change-password",tr.ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/password-reset requested")
+router.get("/changepassword",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/changepassword requested")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
     try {
         const response = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/me')
 
-        res.render("change-password",{
+        res.render("account_password",{
             tenant: tr.getRequestingTenant(req).tenant,
-            tokenSet: req.userContext.tokens
+            tokenSet: req.userContext.tokens,
+            flash: req.flash('msg'),
         });
     }
     catch(error) {
-        res.render("me",{
+        res.render("account_password",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: new userProfile(),
@@ -287,8 +290,8 @@ router.get("/me/change-password",tr.ensureAuthenticated(), async (req, res, next
     }
 });
 
-router.get("/me/configure-mfa",tr.ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/configure-mfa requested")
+router.get("/configuremfa",tr.ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/configuremfa requested")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
     try {
@@ -296,19 +299,136 @@ router.get("/me/configure-mfa",tr.ensureAuthenticated(), async (req, res, next) 
         const enrolled = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors');
         const toEnroll = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors/catalog');
 
-        res.render("configure-mfa",{
+        var smsEnrolled = false;
+        var smsFactorId = '';
+        enrolled.data.forEach(function(factor){
+            if(factor.factorType == 'sms'){
+                smsEnrolled = true;
+                smsFactorId = factor.id;
+            }
+        })
+        
+        res.render("account_mfa",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             enrolledFactors: enrolled.data,
-            factorsToEnroll: toEnroll.data
+            factorsToEnroll: toEnroll.data,
+            smsEnrolled: smsEnrolled,
+            smsFactorId: smsFactorId,
+            flash: req.flash('msg'),
         });
     }
     catch(error) {
-        res.render("me",{
+        res.render("account_mfa",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: new userProfile(),
             error: parseError(error)
+        });
+    }
+});
+
+router.post("/configuresms",[tr.ensureAuthenticated(),urlencodedParser], async (req, res, next) => {
+    logger.verbose("/configuresms requested")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    
+    try {
+        var idToken = parseJWT(req.userContext.tokens.id_token);
+        var body = {
+            "factorType": "sms",
+            "provider":"OKTA",
+            "profile": {
+                "phoneNumber": req.body.phone_number
+            }
+        }
+
+        await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors?updatePhone=true', body);
+        
+        const enrolled = await axios.get(tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors');
+
+        var factorActive = false;
+        var factorId = false;
+        enrolled.data.forEach(function(factor){
+            if(factor.factorType == 'sms'){
+                factorId = factor.id;
+                console.log(factor.status);
+                if(factor.status == 'ACTIVE'){
+                    factorActive = true;
+                }
+            }
+        })
+
+        if(factorActive){
+            req.flash('msg', 'SMS Factor enrolled');
+            res.redirect('/configuremfa');
+        }else{
+            var factorId = factorId;
+            res.render("mfa_verifysms",{
+                tenant: tr.getRequestingTenant(req).tenant,
+                tokenSet: req.userContext.tokens,
+                factorId: factorId,
+            });
+        }
+    }
+    catch(error) {
+        res.render("account_mfa",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            error: error,
+        });
+    }
+});
+
+router.post("/verifysms",[tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+    logger.verbose("/verify requested")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    
+    try {
+        var idToken = parseJWT(req.userContext.tokens.id_token);
+        var body = {
+            "passCode": req.body.verification_code,
+        }
+
+        await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors/'+req.body.factor_id+'/lifecycle/activate', body);
+        
+        req.flash('msg', 'SMS Factor enrolled');
+        res.redirect('/configuremfa');
+    }
+    catch(error) {
+        res.render("account_mfa",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            error: parseError(error),
+        });
+    }
+});
+
+
+router.post("/removesms",[tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+    logger.verbose("/configuresms requested")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    
+    try {
+        var idToken = parseJWT(req.userContext.tokens.id_token);
+        console.log(req.body);
+        var factorId = req.body.sms_factor_id;
+
+        var url = tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors/'+factorId;
+        
+        console.log(url);
+        var result = await axios.delete(url);
+        
+        req.flash('msg', 'SMS Factor reset');
+        res.redirect('/configuremfa');
+    }
+    catch(error) {
+        res.render("account_mfa",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            error: parseError(error),
         });
     }
 });

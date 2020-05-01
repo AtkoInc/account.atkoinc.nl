@@ -27,7 +27,12 @@
         <!-- ============================================================== -->
         {{>navbar}}
         {{>sidebar}}
-        {{{body}}}
+        <div class="dashboard-wrapper">
+            <div class="container-fluid dashboard-content">
+                {{>flash}}
+                {{{body}}}
+            </div>
+        </div>
     </div>
     <!-- ============================================================== -->
     <!-- end main wrapper  -->
@@ -53,6 +58,17 @@
     <script src="assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
     <script src="assets/vendor/charts/c3charts/C3chartjs.js"></script>
     <script src="assets/libs/js/dashboard-ecommerce.js"></script>
+    <script>
+        var links = $('#navbarNav .nav-link');
+        for (var i = 0; i < links.length; i++) {
+            if (links[i].href == document.URL) {
+                $(links[i]).addClass('active').parents('.submenu').removeClass('collapse').addClass('expand');
+                $(links[i])
+            }
+        }
+        
+        
+    </script>
 </body>
  
 </html>        
