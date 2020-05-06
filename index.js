@@ -352,7 +352,7 @@ router.post("/configuresms",[tr.ensureAuthenticated(),urlencodedParser], async (
         enrolled.data.forEach(function(factor){
             if(factor.factorType == 'sms'){
                 factorId = factor.id;
-                console.log(factor.status);
+
                 if(factor.status == 'ACTIVE'){
                     factorActive = true;
                 }
@@ -413,12 +413,10 @@ router.post("/removesms",[tr.ensureAuthenticated(), urlencodedParser], async (re
     
     try {
         var idToken = parseJWT(req.userContext.tokens.id_token);
-        console.log(req.body);
         var factorId = req.body.sms_factor_id;
 
         var url = tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors/'+factorId;
         
-        console.log(url);
         var result = await axios.delete(url);
         
         req.flash('msg', 'SMS Factor reset');
