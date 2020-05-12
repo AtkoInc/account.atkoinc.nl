@@ -33,6 +33,22 @@
                     </div>
                 </form>
                 {{/if}}
+
+                <hr>
+                {{#if otpEnrolled}}
+                <p>Your OTP second factor is <b>ACTIVE</b></p>
+                <form action="removeotp" method="post">
+                    <div class="form-group" style="display:none;">
+                        <label for="otp_factor_id" class="col-form-label">OTP Factor ID</label>
+                        <input id="otp_factor_id" class="form-control" name="otp_factor_id" type="text" value="{{otpFactorId}}"/>
+                    </div>
+                    <div>
+                        <button class="btn btn-danger" type="submit">Reset OTP Factor</button>
+                    </div>
+                </form>
+                {{else}}
+                <p>Your OTP second factor is <b>INACTIVE</b></p>
+                {{/if}}
             </div>
         </div>
     </div>

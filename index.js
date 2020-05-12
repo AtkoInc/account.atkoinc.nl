@@ -301,10 +301,16 @@ router.get("/configuremfa",tr.ensureAuthenticated(), async (req, res, next) => {
 
         var smsEnrolled = false;
         var smsFactorId = '';
+        var otpEnrolled = false;
+        var otpFactorId = '';
         enrolled.data.forEach(function(factor){
             if(factor.factorType == 'sms'){
                 smsEnrolled = true;
                 smsFactorId = factor.id;
+            }
+            else if(factor.factorType == 'token:software:totp'){
+                otpEnrolled = true;
+                otpFactorId = factor.id;
             }
         })
         
@@ -315,6 +321,8 @@ router.get("/configuremfa",tr.ensureAuthenticated(), async (req, res, next) => {
             factorsToEnroll: toEnroll.data,
             smsEnrolled: smsEnrolled,
             smsFactorId: smsFactorId,
+            otpEnrolled: otpEnrolled,
+            otpFactorId: otpFactorId,
             flash: req.flash('msg'),
         });
     }
@@ -407,7 +415,7 @@ router.post("/verifysms",[tr.ensureAuthenticated(), urlencodedParser], async (re
 
 
 router.post("/removesms",[tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
-    logger.verbose("/configuresms requested")
+    logger.verbose("/removesms requested")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
     
@@ -420,6 +428,31 @@ router.post("/removesms",[tr.ensureAuthenticated(), urlencodedParser], async (re
         var result = await axios.delete(url);
         
         req.flash('msg', 'SMS Factor reset');
+        res.redirect('/configuremfa');
+    }
+    catch(error) {
+        res.render("account_mfa",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            error: parseError(error),
+        });
+    }
+});
+
+router.post("/removeotp",[tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+    logger.verbose("/removeotp requested")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    
+    try {
+        var idToken = parseJWT(req.userContext.tokens.id_token);
+        var factorId = req.body.otp_factor_id;
+
+        var url = tr.getRequestingTenant(req).tenant+'/api/v1/users/'+idToken.sub+'/factors/'+factorId;
+        
+        var result = await axios.delete(url);
+        
+        req.flash('msg', 'OTP Factor reset');
         res.redirect('/configuremfa');
     }
     catch(error) {
