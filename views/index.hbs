@@ -1,3 +1,38 @@
+        <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+        <style>
+            .dashboard-wrapper {
+                position: relative;
+                margin-top: 80px;
+                margin: 0 auto;
+                max-width:600px;
+                background-color: #fff;
+                z-index: 99;
+                min-height: auto!important;
+
+            }
+            .card {
+                width: 100%;
+                border: solid 1px #009677;
+                line-height: 25px;
+                padding: 10px;
+                border-radius: 0px;
+            }
+
+            .card-title {
+                color: #009677;
+                font-size: 16px ;
+                font-family: Arial, sans-serif !important;
+                font-weight: bold;
+            }
+
+            .card-header {
+                border: 0px !important;
+            }
+
+            .dashboard-content {
+                margin-top: 80px !important;
+            }
+        </style>
         <!-- ============================================================== -->
         <!-- wrapper  -->
         <!-- ============================================================== -->
@@ -34,7 +69,7 @@
 
 	                                    <div class="card-body">
 	                                        <p class="card-text">To secure the data within our platform, and your sensitive information, please login to you MyAtko account to be able to use our services. In case you do not have access to your account, please use the following self-service options or contact us at +99 (555) 111 333.</p>
-	                                        <a href="/home" class="btn btn-primary">Login to your account</a><a href="https://login.atkoinc.nl/signin/forgot-password"><button class="btn btn-default" type="Button">I forgot my password</button></a><a href="https://login.atkoinc.nl/signin/register"><button class="btn btn-default" type="Button">Register a new account</button></a>
+	                                        <a href="/home" class="btn btn-primary">Login to your account</a><a href="https://login.atkoinc.nl/signin/forgot-password"><button class="btn btn-default" type="Button">I forgot my password</button></a><a href="#"><button class="btn btn-default" type="Button">Register a new account</button></a>
 	                                    </div>
 	                                </div>
 	                            </div>
@@ -49,3 +84,41 @@
                 </div>
             </div>
 
+        <style>
+            .shadow {
+                background-color: red;
+                z-index: 2;
+                position: absolute;
+                background-image: url('assets/images/bg_shadow.jpg')
+            }
+        </style>
+        <div class="shadow">
+        x
+        </div>
+        <script type="text/javascript">
+            function setShadow() {
+              $(".shadow").css({
+                'width': ($(".dashboard-wrapper").width() + 'px')
+              });
+              $(".shadow").css({
+                'height': ($(".dashboard-wrapper").height() + 'px')
+              });
+              var marginLeft = parseInt($(".dashboard-wrapper").css("margin-left"))+50;
+              var marginTop = parseInt($(".dashboard-wrapper").css("margin-top"))-parseInt(($(".dashboard-wrapper").height() + 'px'))+100
+              console.log(marginLeft);
+              $(".shadow").css({
+                'margin-left': marginLeft+ 'px'
+              });
+              $(".shadow").css({
+                'margin-top': marginTop+ 'px'
+              });
+            }
+
+            $(document).ready(function() {
+                setShadow();
+            });            
+
+            $( window ).resize(function() {
+                setShadow();
+            }); 
+        </script>

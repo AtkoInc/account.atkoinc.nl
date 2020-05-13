@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="assets/vendor/charts/c3charts/c3.css">
     <link rel="stylesheet" href="assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
-    <title>This is a test Atkoinc template</title>
+    <link rel="icon" type="image/png" href="https://www.oldmutual.co.za/om-assets/static/om.ce0531f.58238d402ab341c91c18f2a416bceeca.png">
+
+    <title>Atkoinc :: Launchpad</title>
 </head>
 <body>
     <!-- ============================================================== -->
@@ -25,14 +27,9 @@
         <!-- ============================================================== -->
         <!-- wrapper  -->
         <!-- ============================================================== -->
+        {{>flash}}
         {{>navbar}}
-        {{>sidebar}}
-        <div class="dashboard-wrapper">
-            <div class="container-fluid dashboard-content">
-                {{>flash}}
-                {{{body}}}
-            </div>
-        </div>
+        {{{body}}}
     </div>
     <!-- ============================================================== -->
     <!-- end main wrapper  -->
@@ -71,4 +68,4 @@
     </script>
 </body>
  
-</html>        
+</html>           
