@@ -131,7 +131,7 @@ router.get("/home",tr.ensureAuthenticated(), async (req, res, next) => {
         });
     }
     catch(error) {
-        rees.render("account_home",{
+        res.render("account_home",{
             layout: 'main',
             template: 'account_home',
             tenant: tr.getRequestingTenant(req).tenant,
