@@ -131,7 +131,7 @@ router.get("/home",tr.ensureAuthenticated(), async (req, res, next) => {
         });
     }
     catch(error) {
-        rees.render("account_home",{
+        res.render("account_home",{
             layout: 'main',
             template: 'account_home',
             tenant: tr.getRequestingTenant(req).tenant,
@@ -486,6 +486,9 @@ router.get("/logout", tr.ensureAuthenticated(), (req, res) => {
         + encodeURI(protocol+"://"+req.headers.host)
         );
 });
+
+var delegateRouter = require('./routes/delegation')(tr)
+app.use('/delegate', delegateRouter)
 
 router.get("/error",async (req, res, next) => {
     res.render("error",{

@@ -25,6 +25,8 @@ class Tenant {
                 }
                 this.callbackURL = tenantProfileJson.redirect_uri+'/authorization-code/'+sub
                 logger.verbose("CallbackURL: "+this.callbackURL)
+                this.delegationServiceUrl = tenantProfileJson.delegation_service_url
+                this.delegationServiceSecret = tenantProfileJson.delgation_service_secret
             }
             catch(error) {
                 logger.error(error);
@@ -41,6 +43,8 @@ class Tenant {
                 this.clientID = process.env.CLIENT_ID,
                 this.clientSecret = process.env.CLIENT_SECRET,
                 this.callbackURL = process.env.REDIRECT_URI+'/authorization-code/'+sub
+                this.delegationServiceUrl = process.env.DELEGATION_SERVICE_URL
+                this.delegationServiceSecret = process.env.DELEGATION_SERVICE_SECRET
             }
             catch(error) {
                 logger.error(error);
