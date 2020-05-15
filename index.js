@@ -17,7 +17,8 @@ const userProfile = require('./models/userprofile')
 const PORT = process.env.PORT || 3000;
 
 app = express();
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(flash());
 
 app.engine('hbs',  hbs( { 
@@ -486,6 +487,9 @@ router.get("/logout", tr.ensureAuthenticated(), (req, res) => {
         + encodeURI(protocol+"://"+req.headers.host)
         );
 });
+
+var delegateRouter = require('./routes/delegation')(tr)
+app.use('/delegate', delegateRouter)
 
 router.get("/error",async (req, res, next) => {
     res.render("error",{

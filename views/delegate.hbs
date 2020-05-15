@@ -1,0 +1,51 @@
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="page-header" id="top">
+            <h2 class="pageheader-title">Delegate access to your account</h2>
+        </div>
+        <div class="section-block" id="basicform">
+            <p>You can't always be there when your account needs you. Sometimes you are not the best person to do something. Grant others access to carry out actions on your behalf</p>
+        </div>
+        <div class="card">
+            <h5 class="card-header">Your Delegates </h5>
+            <ul class="list-group list-group-flush">
+            {{#each delegates}}
+                <li class="list-group-item">
+                    <h4>{{this.firstName}} {{this.secondName}}</h4>
+                    <span>{{this.email}}</span>
+                    <div>
+                        <a  href="/delegate/remove/{{this.id}}">Remove</a>
+                    </div>
+                </li>
+            {{/each}}
+                <li class="list-group-item">
+                    <div id="addButton" style="display: block;">
+                        <button class="btn btn-primary" onclick="AddDelegateShowHide()">Add</button>
+                    </div>
+                    <div id="addForm" style="display: none;">
+                        <form method="POST" action="/delegate/add">
+                            <label for="delegateUser">Email or username</label>
+                            <input id="delegateUser" name="delegateUser" value=""/>
+                            <button class="btn btn-primary" type="submit">Continue</button>
+                            <button class="btn btn-default" type="reset" onclick="AddDelegateShowHide()">Cancel</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    function AddDelegateShowHide(){
+        var button = document.getElementById("addButton")
+        var form = document.getElementById("addForm")
+        if (button.style.display === "none") {
+            button.style.display = "block";
+            form.style.display = "none";
+        } else {
+            button.style.display = "none";
+            form.style.display = "block";
+        }
+    }
+</script>
