@@ -181,6 +181,7 @@ router.get("/account",tr.ensureAuthenticated(), async (req, res, next) => {
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             user: profile,
+            flash: req.flash('msg'),
         });
     }
     catch(error) {
@@ -461,6 +462,30 @@ router.post("/removeotp",[tr.ensureAuthenticated(), urlencodedParser], async (re
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
             error: parseError(error),
+        });
+    }
+});
+
+router.post("/savepreferences",[tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
+    logger.verbose("/savepreferences post")
+    const tokenSet = req.userContext.tokens;
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    
+    try {        
+        await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/me', {
+            'profile': {
+                mfa_preferred: req.body.mfa_preferred,
+            }
+        })
+
+        req.flash('msg', 'Preferences updated');
+        res.redirect('/account');
+    }
+    catch(error) {
+        res.render("account_edit",{
+            tenant: tr.getRequestingTenant(req).tenant,
+            tokenSet: req.userContext.tokens,
+            error: parseError(error)
         });
     }
 });
