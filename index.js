@@ -221,7 +221,7 @@ router.get("/account_profile",tr.ensureAuthenticated(), async (req, res, next) =
 
 router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
     const tokenSet = req.userContext.tokens;
-    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    axios.defaults.headers.common['Authorization'] = 'Bearer '+tokenSet.access_token
 
     try {        
         await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/me', {
@@ -229,6 +229,9 @@ router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], as
                 firstName: req.body.first_name,
                 lastName: req.body.last_name,
                 title: req.body.title,
+                profileUrl: req.body.profile_url,
+                displayName: req.body.display_name,
+                nickName: req.body.nick_name,
             }
         })
 
@@ -236,6 +239,7 @@ router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], as
         res.redirect('/account_profile');
     }
     catch(error) {
+        console.log(error)
         res.render("account_profile",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,

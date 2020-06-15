@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="assets/vendor/charts/c3charts/c3.css">
     <link rel="stylesheet" href="assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
-    <title>This is a test Atkoinc template</title>
+    <title>Atkoinc :: Account</title>
+    <link rel="icon" type="image/png" href="assets/images/icons/logo.png">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- ============================================================== -->
@@ -29,6 +31,7 @@
         {{>sidebar}}
         <div class="dashboard-wrapper">
             <div class="container-fluid dashboard-content">
+                {{>tokenStore}}
                 {{>flash}}
                 {{{body}}}
             </div>
