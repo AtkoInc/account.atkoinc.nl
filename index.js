@@ -27,6 +27,12 @@ app.engine('hbs',  hbs( {
     layoutsDir: __dirname + '/views/layouts/',
     partialsDir: __dirname + '/views/partials/',
     helpers: {
+        ifCond: (v1, v2, options) => {
+          if(v1 === v2) {
+            return options.fn(this);
+          }
+          return options.inverse(this);            
+        },
         ifEquals: (arg1, arg2, options) => {
             return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
         },
@@ -474,11 +480,28 @@ router.post("/savepreferences",[tr.ensureAuthenticated(), urlencodedParser], asy
     logger.verbose("/savepreferences post")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
-    
     try {        
+        var bMail_service = false;
+        var bMail_newsletter = false;
+        var bMail_daydeals = false;
+        if (req.body.mail_service == 'on') {
+            bMail_service = true;
+        }
+        if (req.body.mail_newsletter == 'on') {
+            bMail_newsletter = true;
+        }
+        if (req.body.mail_daydeals == 'on') {
+            bMail_daydeals = true;
+        }
+        console.log(req.body.mail_service + ' is set to:' + bMail_service);
+        console.log(req.body.mail_newsletter + ' is set to:' + bMail_newsletter);
+        console.log(req.body.mail_daydeals + ' is set to:' + bMail_daydeals);
         await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/me', {
             'profile': {
                 mfa_preferred: req.body.mfa_preferred,
+                mail_service: bMail_service,
+                mail_newsletter: bMail_newsletter,
+                mail_daydeals: bMail_daydeals
             }
         })
 
