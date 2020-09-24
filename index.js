@@ -27,12 +27,6 @@ app.engine('hbs',  hbs( {
     layoutsDir: __dirname + '/views/layouts/',
     partialsDir: __dirname + '/views/partials/',
     helpers: {
-        ifCond: (v1, v2, options) => {
-          if(v1 === v2) {
-            return options.fn(this);
-          }
-          return options.inverse(this);            
-        },
         ifEquals: (arg1, arg2, options) => {
             return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
         },
@@ -50,6 +44,33 @@ app.engine('hbs',  hbs( {
             return options.fn(this).replace(
                 new RegExp(' value=\"' + selected + '\"'),
                 '$& selected="selected"');
+        },
+        theme: function(){
+            return process.env.THEME
+        },
+        microServiceLinks: function(link) {
+            return process.env[link];
+        },
+        if_link_exists: function(conditional, options) {
+            if (process.env[conditional]) {
+                return options.fn(this);
+            } else {
+                return options.inverse(this);
+            }
+        },
+        appTitle: function(){
+            if(process.env.TITLE){
+                return process.env.TITLE;
+            }
+
+            return 'Atko Inc.'
+        },
+        appLogoUrl: function(){
+            if(process.env.LOGO_URL){
+                return process.env.LOGO_URL;
+            }
+
+            return 'assets/images/icons/logo.png'
         }
     }
   } ) );
@@ -227,7 +248,7 @@ router.get("/account_profile",tr.ensureAuthenticated(), async (req, res, next) =
 
 router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], async (req, res, next) => {
     const tokenSet = req.userContext.tokens;
-    axios.defaults.headers.common['Authorization'] = 'Bearer '+tokenSet.access_token
+    axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
 
     try {        
         await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/me', {
@@ -235,9 +256,6 @@ router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], as
                 firstName: req.body.first_name,
                 lastName: req.body.last_name,
                 title: req.body.title,
-                profileUrl: req.body.profile_url,
-                displayName: req.body.display_name,
-                nickName: req.body.nick_name,
             }
         })
 
@@ -245,7 +263,6 @@ router.post("/account_profile", [tr.ensureAuthenticated(), urlencodedParser], as
         res.redirect('/account_profile');
     }
     catch(error) {
-        console.log(error)
         res.render("account_profile",{
             tenant: tr.getRequestingTenant(req).tenant,
             tokenSet: req.userContext.tokens,
@@ -480,28 +497,11 @@ router.post("/savepreferences",[tr.ensureAuthenticated(), urlencodedParser], asy
     logger.verbose("/savepreferences post")
     const tokenSet = req.userContext.tokens;
     axios.defaults.headers.common['Authorization'] = `Bearer `+tokenSet.access_token
+    
     try {        
-        var bMail_service = false;
-        var bMail_newsletter = false;
-        var bMail_daydeals = false;
-        if (req.body.mail_service == 'on') {
-            bMail_service = true;
-        }
-        if (req.body.mail_newsletter == 'on') {
-            bMail_newsletter = true;
-        }
-        if (req.body.mail_daydeals == 'on') {
-            bMail_daydeals = true;
-        }
-        console.log(req.body.mail_service + ' is set to:' + bMail_service);
-        console.log(req.body.mail_newsletter + ' is set to:' + bMail_newsletter);
-        console.log(req.body.mail_daydeals + ' is set to:' + bMail_daydeals);
         await axios.post(tr.getRequestingTenant(req).tenant+'/api/v1/users/me', {
             'profile': {
                 mfa_preferred: req.body.mfa_preferred,
-                mail_service: bMail_service,
-                mail_newsletter: bMail_newsletter,
-                mail_daydeals: bMail_daydeals
             }
         })
 
